@@ -1,0 +1,83 @@
+site_name: LAIOS — Local AI Operating System
+site_description: Local-first autonomous agent framework for Python
+site_author: AI-Alon
+repo_url: https://github.com/AI-Alon/laios
+repo_name: AI-Alon/laios
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Quick Start: quickstart.md
+      - Chat Setup: CHAT_SETUP.md
+  - Tutorials:
+      - "1: Your First Agent": tutorials/01-first-agent.md
+      - "2: Working with Memory": tutorials/02-working-with-memory.md
+      - "3: Parallel Execution": tutorials/03-parallel-execution.md
+      - "4: Building Plugins": tutorials/04-building-plugins.md
+  - Developer Guides:
+      - Creating Tools: guides/creating-tools.md
+      - Creating Plugins: guides/creating-plugins.md
+      - Custom LLM Provider: guides/custom-llm-provider.md
+      - Configuration: guides/configuration.md
+  - API Reference:
+      - Overview: api/index.md
+      - Core: api/core.md
+      - Tools: api/tools.md
+      - LLM: api/llm.md
+      - Memory: api/memory.md
+      - Planning: api/planning.md
+      - Execution: api/execution.md
+      - Reflection: api/reflection.md
+      - Plugins: api/plugins.md
+  - Examples: ../examples/README.md
+  - Architecture: architecture.md
+  - Changelog: changelog.md
+  - FAQ: faq.md
+  - Roadmap: ROADMAP.md

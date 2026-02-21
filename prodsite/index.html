@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LAIOS — Local AI Operating System</title>
+  <meta name="description" content="A production-grade, local-first autonomous agent framework for building intelligent systems that reason, plan, execute, and learn. Your data never leaves your machine.">
+  <meta name="keywords" content="LAIOS, AI, autonomous agent, local AI, agent framework, LLM, open source">
+  <meta name="author" content="ai-alon">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="LAIOS — Local AI Operating System">
+  <meta property="og:description" content="Production-grade, local-first autonomous agent framework. Build intelligent systems that reason, plan, execute, and learn.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ai-alon.github.io/LAIOS">
+
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">L</span>
+        <span class="logo-text">LAIOS</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#features">Features</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#tools">Tools</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="https://github.com/ai-alon/LAIOS" target="_blank" rel="noopener" class="nav-github">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="grid-lines"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-badge">v1.0.0 Stable Release</div>
+      <h1 class="hero-title">
+        Local AI<br>
+        <span class="gradient-text">Operating System</span>
+      </h1>
+      <p class="hero-subtitle">
+        A production-grade, local-first autonomous agent framework for building intelligent systems that reason, plan, execute, and learn.
+        <strong>Your data never leaves your machine.</strong>
+      </p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn btn-primary">Get Started</a>
+        <a href="https://github.com/ai-alon/LAIOS" target="_blank" rel="noopener" class="btn btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <div class="hero-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-line">
+            <span class="terminal-prompt">$</span>
+            <span class="terminal-cmd" id="typedCommand"></span>
+            <span class="terminal-cursor">|</span>
+          </div>
+          <div class="terminal-output" id="terminalOutput"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Principles Bar -->
+  <section class="principles">
+    <div class="container">
+      <div class="principles-grid">
+        <div class="principle">
+          <div class="principle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <div>
+            <strong>Local-First</strong>
+            <span>Your data never leaves your machine</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="principle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="8" height="8" rx="1"/><rect x="14" y="2" width="8" height="8" rx="1"/><rect x="2" y="14" width="8" height="8" rx="1"/><rect x="14" y="14" width="8" height="8" rx="1"/></svg>
+          </div>
+          <div>
+            <strong>Modular</strong>
+            <span>Every component is swappable</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="principle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <strong>Observable</strong>
+            <span>Full visibility into reasoning</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="principle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <strong>Explicit</strong>
+            <span>No hidden prompts or magic</span>
+          </div>
+        </div>
+        <div class="principle">
+          <div class="principle-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <strong>Production-Ready</strong>
+            <span>Built for real systems</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Powerful Features</h2>
+        <p>Everything you need to build autonomous AI agents that work privately on your infrastructure.</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon blue">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <h3>Multi-Provider LLM</h3>
+          <p>Seamlessly switch between Ollama (local), OpenAI, and Anthropic. Built-in LLM router with fallback and round-robin strategies.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon purple">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <h3>Three-Tier Memory</h3>
+          <p>Short-term conversation buffer, long-term persistent storage, and episodic memory for completed goals. Your agent remembers everything.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon green">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>Production Hardening</h3>
+          <p>Circuit breaker, rate limiting, API key auth, audit logging, input sanitization, graceful shutdown, and health checks built-in.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon orange">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          </div>
+          <h3>Plugin System</h3>
+          <p>Extend LAIOS with custom tools and behaviors without modifying core code. Register tools, subscribe to events, intercept parameters.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon cyan">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Web UI + REST API</h3>
+          <p>Full React dashboard with real-time WebSocket updates. FastAPI server with session management, chat, tool execution, and health monitoring.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon pink">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <h3>Powerful CLI</h3>
+          <p>Feature-rich command-line interface with interactive chat, one-shot goal execution, live task monitoring, memory search, and session management.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section class="architecture" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <h2>How It Works</h2>
+        <p>LAIOS follows a clear cognitive pipeline: Reason, Plan, Execute, Reflect.</p>
+      </div>
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Reason</h3>
+            <p>The Reasoner parses natural language into structured goals with intent classification and goal formulation.</p>
+          </div>
+        </div>
+        <div class="pipeline-connector">
+          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M0 12h32M28 6l6 6-6 6"/></svg>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Plan</h3>
+            <p>The Planner decomposes goals into executable DAG task plans with dependency tracking and optimization.</p>
+          </div>
+        </div>
+        <div class="pipeline-connector">
+          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M0 12h32M28 6l6 6-6 6"/></svg>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Execute</h3>
+            <p>The Executor invokes tools to complete tasks with retry logic, monitoring, and real-time progress tracking.</p>
+          </div>
+        </div>
+        <div class="pipeline-connector">
+          <svg width="40" height="24" viewBox="0 0 40 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M0 12h32M28 6l6 6-6 6"/></svg>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Reflect</h3>
+            <p>The Reflector evaluates outcomes, learns from failures, and stores insights for continuous improvement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section class="tools" id="tools">
+    <div class="container">
+      <div class="section-header">
+        <h2>15 Built-in Tools</h2>
+        <p>A comprehensive toolkit organized in 6 categories, all with schema validation and permission controls.</p>
+      </div>
+      <div class="tools-grid">
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            <h4>Filesystem</h4>
+          </div>
+          <ul>
+            <li>read_file</li>
+            <li>write_file</li>
+            <li>list_directory</li>
+            <li>get_info</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            <h4>Shell</h4>
+          </div>
+          <ul>
+            <li>execute</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            <h4>Web</h4>
+          </div>
+          <ul>
+            <li>fetch</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7"/><path d="M6 9v12"/></svg>
+            <h4>Git</h4>
+          </div>
+          <ul>
+            <li>status</li>
+            <li>log</li>
+            <li>diff</li>
+            <li>commit</li>
+            <li>clone</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            <h4>Python</h4>
+          </div>
+          <ul>
+            <li>execute</li>
+          </ul>
+        </div>
+        <div class="tool-category">
+          <div class="tool-cat-header">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            <h4>Data</h4>
+          </div>
+          <ul>
+            <li>parse_json</li>
+            <li>parse_csv</li>
+            <li>transform</li>
+            <li>format</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Providers Section -->
+  <section class="providers">
+    <div class="container">
+      <div class="section-header">
+        <h2>Multi-Provider LLM Support</h2>
+        <p>Run locally with full privacy, or connect to cloud providers when you need more power.</p>
+      </div>
+      <div class="providers-grid">
+        <div class="provider-card">
+          <div class="provider-badge default">Default</div>
+          <h3>Ollama</h3>
+          <p>Run completely local. Supports Gemma, LLaMA, Mistral, and more. Zero cloud dependency.</p>
+          <code>provider: ollama</code>
+        </div>
+        <div class="provider-card">
+          <h3>OpenAI</h3>
+          <p>Connect to GPT-4o, GPT-3.5, and other OpenAI models for maximum capability.</p>
+          <code>provider: openai</code>
+        </div>
+        <div class="provider-card">
+          <h3>Anthropic</h3>
+          <p>Use Claude models for nuanced reasoning and complex task execution.</p>
+          <code>provider: anthropic</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start Section -->
+  <section class="quickstart" id="quickstart">
+    <div class="container">
+      <div class="section-header">
+        <h2>Quick Start</h2>
+        <p>Get up and running in under 5 minutes.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-label">Step 1</div>
+          <h3>Clone & Install</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span>bash</span>
+              <button class="copy-btn" data-target="code1" aria-label="Copy code">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
+            <pre><code id="code1">git clone https://github.com/ai-alon/LAIOS.git
+cd LAIOS
+pip install -e ".[dev,api,llm]"</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-label">Step 2</div>
+          <h3>Set Up Local LLM</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span>bash</span>
+              <button class="copy-btn" data-target="code2" aria-label="Copy code">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
+            <pre><code id="code2"># Install Ollama
+curl https://ollama.ai/install.sh | sh
+
+# Pull a model
+ollama pull gemma3:4b</code></pre>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-label">Step 3</div>
+          <h3>Start Using LAIOS</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span>bash</span>
+              <button class="copy-btn" data-target="code3" aria-label="Copy code">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              </button>
+            </div>
+            <pre><code id="code3"># Interactive chat
+laios chat
+
+# One-shot goal execution
+laios run "find all Python files"
+
+# Start web interface
+laios serve --port 8000</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="docker-alt">
+        <h3>Or use Docker</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span>bash</span>
+            <button class="copy-btn" data-target="code4" aria-label="Copy code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            </button>
+          </div>
+          <pre><code id="code4">docker-compose up -d
+# Access at http://localhost:80</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="usecases">
+    <div class="container">
+      <div class="section-header">
+        <h2>Use Cases</h2>
+        <p>LAIOS adapts to your needs — from personal projects to enterprise automation.</p>
+      </div>
+      <div class="usecases-grid">
+        <div class="usecase-card">
+          <div class="usecase-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h4>Personal AI Assistant</h4>
+          <p>Scheduling, email triage, web research — with long-term memory that remembers your preferences.</p>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h4>Code Review Agent</h4>
+          <p>Analyze PRs, suggest improvements, enforce standards — runs autonomously on your codebase.</p>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h4>Research Assistant</h4>
+          <p>Literature review, data analysis, and report generation with structured reasoning and memory.</p>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <h4>DevOps Automation</h4>
+          <p>Infrastructure monitoring, incident response, and automated remediation with safety guardrails.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Levels Section -->
+  <section class="trust-levels">
+    <div class="container">
+      <div class="section-header">
+        <h2>You Control the Agent</h2>
+        <p>Choose how much autonomy to give your agent with configurable trust levels.</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card">
+          <div class="trust-badge paranoid">Paranoid</div>
+          <h4>Full Manual Control</h4>
+          <p>Shows the plan without executing. Every action requires your explicit approval.</p>
+        </div>
+        <div class="trust-card active">
+          <div class="trust-badge balanced">Balanced</div>
+          <h4>Smart Defaults</h4>
+          <p>Confirms risky operations before executing. Safe actions run automatically. <em>Recommended.</em></p>
+        </div>
+        <div class="trust-card">
+          <div class="trust-badge autonomous">Autonomous</div>
+          <h4>Full Auto</h4>
+          <p>Auto-executes everything without confirmation. Best for trusted, isolated environments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2>Ready to build intelligent agents?</h2>
+      <p>LAIOS is open-source and free. Start building today.</p>
+      <div class="cta-actions">
+        <a href="https://github.com/ai-alon/LAIOS" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+        <a href="#quickstart" class="btn btn-secondary btn-lg">Quick Start Guide</a>
+      </div>
+      <div class="cta-meta">
+        <span>MIT License</span>
+        <span class="dot"></span>
+        <span>Python 3.10+</span>
+        <span class="dot"></span>
+        <span>v1.0.0</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">L</span>
+            <span class="logo-text">LAIOS</span>
+          </a>
+          <p>Local AI Operating System</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h5>Project</h5>
+            <a href="https://github.com/ai-alon/LAIOS" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://github.com/ai-alon/LAIOS/issues" target="_blank" rel="noopener">Issues</a>
+            <a href="https://github.com/ai-alon/LAIOS/releases" target="_blank" rel="noopener">Releases</a>
+          </div>
+          <div class="footer-col">
+            <h5>Resources</h5>
+            <a href="https://github.com/ai-alon/LAIOS#readme" target="_blank" rel="noopener">Documentation</a>
+            <a href="https://github.com/ai-alon/LAIOS/tree/main/examples" target="_blank" rel="noopener">Examples</a>
+            <a href="https://github.com/ai-alon/LAIOS/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+          </div>
+          <div class="footer-col">
+            <h5>Community</h5>
+            <a href="https://github.com/ai-alon/LAIOS/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contributing</a>
+            <a href="https://github.com/ai-alon/LAIOS/discussions" target="_blank" rel="noopener">Discussions</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 LAIOS, by AI-Alon. under the MIT license</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

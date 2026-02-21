@@ -1,0 +1,61 @@
+services:
+
+  # ─────────────────────────────────────────────
+  # LAIOS application server
+  # ─────────────────────────────────────────────
+  laios:
+    build: .
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    env_file:
+      - .env
+    volumes:
+      - laios_data:/root/.laios         # persistent data (keys, sessions, logs)
+      - ./config:/app/config:ro         # live config reload
+    depends_on:
+      ollama:
+        condition: service_started
+    # Port 8000 is internal only — nginx is the only external entry point.
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ─────────────────────────────────────────────
+  # Local LLM backend (Ollama)
+  # ─────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama     # persist downloaded models
+    # Internal only — laios talks to ollama directly
+    expose:
+      - "11434"
+
+  # ─────────────────────────────────────────────
+  # Reverse proxy with TLS termination
+  # ─────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx_certs:/etc/nginx/certs     # mount TLS certificates here
+    depends_on:
+      laios:
+        condition: service_healthy
+
+volumes:
+  laios_data:
+  ollama_models:
+  nginx_certs:

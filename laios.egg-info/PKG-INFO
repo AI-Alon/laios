@@ -1,0 +1,1039 @@
+Metadata-Version: 2.4
+Name: laios
+Version: 1.0.0
+Summary: Local AI Operating System - A modular autonomous agent framework
+Author: LAIOS Team
+License: MIT
+Keywords: ai,agent,autonomous,local,llm
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: typer>=0.9.0
+Requires-Dist: networkx>=3.0
+Requires-Dist: structlog>=23.0.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: httpx>=0.25.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: python-dotenv>=1.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.1.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.5.0; extra == "dev"
+Provides-Extra: api
+Requires-Dist: fastapi>=0.104.0; extra == "api"
+Requires-Dist: uvicorn[standard]>=0.24.0; extra == "api"
+Requires-Dist: aiofiles>=23.0.0; extra == "api"
+Provides-Extra: llm
+Requires-Dist: ollama>=0.1.0; extra == "llm"
+Requires-Dist: openai>=1.0.0; extra == "llm"
+Requires-Dist: anthropic>=0.7.0; extra == "llm"
+Provides-Extra: memory
+Requires-Dist: chromadb>=0.4.0; extra == "memory"
+Provides-Extra: docs
+Requires-Dist: mkdocs>=1.5; extra == "docs"
+Requires-Dist: mkdocs-material>=9.0; extra == "docs"
+Requires-Dist: mkdocs-minify-plugin>=0.7; extra == "docs"
+Dynamic: license-file
+
+# LAIOS - Local AI Operating System
+
+> there is a GUI Web App for laios pleas checkup the WebApp.md for how to run it.
+
+
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+**A local-first, modular autonomous agent framework for building intelligent systems that can reason, plan, execute, and learn.**
+
+## Vision
+
+LAIOS is not a chatbot wrapper. It's a production-grade autonomous agent platform designed for:
+
+- **Researchers** building novel agent architectures
+- **Engineers** deploying AI systems in production
+- **Hobbyists** exploring autonomous AI locally
+- **Enterprises** requiring private, controllable AI agents
+
+## Core Principles
+
+- **Local-First** - Your data never leaves your machine
+- **Modular** - Every component is swappable and extensible
+- **Observable** - Full visibility into reasoning and execution
+- **Explicit** - No hidden prompts, no magic behavior
+- **Production-Ready** - Built for real systems, not demos
+
+---
+
+## Quick Start
+
+### Installation
+
+```sh
+# Clone the repository
+git clone https://github.com/AI-Alon/laios.git
+cd laios
+
+# Basic install
+pip install -e .
+
+# With development tools
+pip install -e ".[dev]"
+
+# With API server support
+pip install -e ".[api]"
+
+# With all LLM providers
+pip install -e ".[llm]"
+
+# Full install (everything)
+pip install -e ".[dev,api,llm]"
+```
+
+### Prerequisites
+
+1. **Python 3.10+**
+
+2. **Install Ollama** (for local LLM - default provider)
+
+```sh
+   # Visit https://ollama.ai/download
+   curl https://ollama.ai/install.sh | sh
+```
+
+3. **Pull a model**
+
+```sh
+   ollama pull gemma3:4b
+```
+
+4. **(Optional) Cloud LLM keys** - Set in `.env` file:
+   ```
+   OPENAI_API_KEY=sk-...
+   ANTHROPIC_API_KEY=sk-ant-...
+   ```
+
+---
+
+## Complete Feature List
+
+### 1. CLI Interface
+
+The `laios` command is the primary way to interact with the framework.
+
+#### `laios version`
+Display the installed LAIOS version.
+
+```sh
+laios version
+```
+
+#### `laios info`
+Show system information including LLM provider, model, trust level, loaded tools count, and status checks.
+
+```sh
+laios info
+```
+
+#### `laios chat`
+Start an interactive chat session with the agent.
+
+```sh
+# Default session
+laios chat
+
+# With custom config
+laios chat --config path/to/config.yaml
+
+# Quiet mode (no banner, no typing effect)
+laios chat --quiet
+
+# Verbose mode (debug output)
+laios chat --verbose
+```
+
+Type `exit`, `quit`, or `bye` to end the session. Sessions are automatically saved to `~/.laios/sessions/`.
+
+#### `laios run`
+Execute a single goal in one shot (non-interactive). Runs the full pipeline: reason -> plan -> execute -> reflect.
+
+```sh
+laios run "analyze this directory and create a summary report"
+laios run "find all TODO comments in Python files" --config custom.yaml
+```
+
+#### `laios status`
+Show running tasks and execution metrics.
+
+```sh
+# One-time status check
+laios status
+
+# Watch mode (auto-refresh)
+laios status --watch --interval 2
+```
+
+---
+
+### 2. Tool System (15 Built-in Tools)
+
+LAIOS ships with 15 built-in tools across 6 categories. All tools have schema validation and permission controls.
+
+#### Tool Management CLI
+
+```sh
+# List all tools
+laios tools list
+
+# Filter by category (filesystem, shell, web, code, data, system, custom)
+laios tools list --category filesystem
+
+# Get detailed info about a tool
+laios tools describe filesystem.read_file
+
+# Execute a tool directly
+laios tools run filesystem.read_file --params '{"path": "/tmp/test.txt"}'
+laios tools run shell.execute --params '{"command": "ls -la"}'
+
+# Export tool schema as JSON
+laios tools schema web.fetch --output web_fetch_schema.json
+```
+
+#### Filesystem Tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `filesystem.read_file` | Read a text file | `path` (required), `encoding` (default: utf-8) |
+| `filesystem.write_file` | Write content to a file | `path`, `content` (required), `encoding`, `create_dirs` |
+| `filesystem.list_directory` | List directory contents | `path`, `recursive`, `include_hidden`, `pattern` (glob) |
+| `filesystem.get_info` | Get file/directory metadata | `path` (required) |
+
+#### Shell Tool
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `shell.execute` | Execute a shell command | `command` (required), `timeout` (max 300s), `working_dir` |
+
+Safety: Blocks dangerous patterns (`rm -rf /`, `dd if=`, `mkfs`, fork bombs). No `shell=True` (prevents injection).
+
+#### Web Tool
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `web.fetch` | HTTP/HTTPS request | `url` (required), `method` (GET/POST/PUT/DELETE/PATCH/HEAD/OPTIONS), `headers`, `body`, `timeout` |
+
+#### Git Tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `git.status` | Show working tree status | `path` |
+| `git.log` | Show commit history | `path`, `count` (max 100), `oneline` |
+| `git.diff` | Show file changes | `path`, `staged`, `file_path` |
+| `git.commit` | Create a commit | `path`, `message` (required), `add_all` |
+| `git.clone` | Clone a repository | `url` (required), `destination`, `depth` |
+
+#### Python Execution Tool
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `python.execute` | Execute Python code in isolated subprocess | `code` (required), `timeout` (max 300s) |
+
+#### Data Processing Tools
+
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `data.parse_json` | Parse JSON, optionally extract by dot-path | `data` (required), `path` (e.g. `users.0.name`) |
+| `data.parse_csv` | Parse CSV into structured records | `data` (required), `delimiter`, `has_header` |
+| `data.transform` | Filter, sort, and limit JSON arrays | `data`, `filter_key`, `filter_op`, `filter_value`, `sort_key`, `sort_reverse`, `limit` |
+| `data.format` | Convert between JSON, CSV, and YAML | `data`, `input_format`, `output_format` |
+
+#### Creating Custom Tools
+
+```python
+from laios.tools.base import BaseTool, ToolCategory, ToolInput, ToolOutput
+from pydantic import Field
+
+class MyInput(ToolInput):
+    text: str = Field(description="Text to process")
+
+class MyTool(BaseTool):
+    name = "my_tool"
+    description = "Uppercases text"
+    category = ToolCategory.CUSTOM
+    required_permissions = set()
+    input_model = MyInput
+
+    def _execute(self, input_data: MyInput) -> ToolOutput:
+        return ToolOutput(success=True, data=input_data.text.upper())
+```
+
+Or use the quick helper:
+
+```python
+from laios.tools.base import create_simple_tool
+
+tool = create_simple_tool(
+    name="uppercase",
+    description="Uppercases text",
+    func=lambda text: text.upper()
+)
+```
+
+---
+
+### 3. Multi-Provider LLM Support
+
+LAIOS supports three LLM providers with a unified interface. Switch providers by changing a single config value.
+
+#### Ollama (Local - Default)
+
+```yaml
+# config/default.yaml
+llm:
+  provider: "ollama"
+  model: "gemma3:4b"
+  base_url: "http://localhost:11434"
+  temperature: 0.5
+  max_tokens: 2048
+  timeout: 120
+  keep_alive: "30m"
+  num_ctx: 4096
+```
+
+Requires: Ollama installed locally + `pip install ollama`
+
+#### OpenAI
+
+```yaml
+llm:
+  provider: "openai"
+  model: "gpt-4o"
+```
+
+Requires: `OPENAI_API_KEY` in `.env` + `pip install 'laios[llm]'`
+
+#### Anthropic
+
+```yaml
+llm:
+  provider: "anthropic"
+  model: "claude-sonnet-4-5-20250929"
+```
+
+Requires: `ANTHROPIC_API_KEY` in `.env` + `pip install 'laios[llm]'`
+
+#### LLM Router (Multi-Provider Fallback)
+
+Route requests across multiple providers with fallback or round-robin strategies:
+
+```python
+from laios.llm.router import LLMRouter
+
+router = LLMRouter(
+    providers=[ollama_client, openai_client],
+    strategy="fallback"  # or "round_robin"
+)
+response = router.generate("Hello!")
+stats = router.get_usage_stats()  # Per-provider call counts, failures, tokens
+```
+
+#### Streaming
+
+All providers support streaming responses for real-time output:
+
+```python
+for chunk in agent.process_message_stream(session_id, "Tell me a story"):
+    print(chunk, end="", flush=True)
+```
+
+---
+
+### 4. Planning Engine
+
+Converts natural language goals into executable DAG (directed acyclic graph) plans using the LLM.
+
+```python
+from laios.planning.planner import Planner
+
+planner = Planner(tool_registry=registry, llm_client=llm_client)
+plan = planner.create_plan(goal=goal, context=context)
+
+# Decompose a complex task into subtasks
+subtasks = planner.decompose_task(task)
+
+# Validate no circular dependencies (uses NetworkX)
+planner.resolve_dependencies(plan)
+
+# Generate alternative plan after failure
+new_plan = planner.replan(plan, failure_context="Task 2 timed out")
+```
+
+The agent automatically creates and executes plans when you use `laios run` or `agent.execute_goal()`.
+
+---
+
+### 5. Reasoning Engine
+
+Parses user input into structured intents and goals with confidence scoring.
+
+```python
+from laios.reasoning.reasoner import Reasoner
+
+reasoner = Reasoner(llm_client=llm_client)
+
+# Parse user input into structured intent
+intent = reasoner.parse_intent("Find all large Python files", context)
+# -> Intent(action_type="search", entities=["Python files"], confidence=0.85)
+
+# If confidence < 0.7, generate clarification questions
+questions = reasoner.clarify_goal(intent)
+
+# Validate feasibility of constraints
+reasoner.validate_constraints(intent)
+```
+
+Includes a fallback rule-based parser that works without an LLM, detecting keywords like `analyze`, `create`, `search`, `modify`, `delete`, `read`, `execute`.
+
+---
+
+### 6. Execution Engine
+
+Runs tasks by invoking tools with timeout enforcement, retry logic, and real-time progress tracking.
+
+```python
+from laios.execution.executor import Executor, ResourceLimits
+
+executor = Executor(
+    tool_registry=registry,
+    resource_limits=ResourceLimits(timeout_seconds=30),
+    max_workers=4,
+    enable_monitoring=True
+)
+
+# Synchronous execution
+result = executor.execute_task(task, context, timeout=30)
+
+# Async execution (runs in thread pool)
+result = await executor.execute_async(task, context)
+
+# Parallel execution of independent tasks
+results = await executor.execute_parallel(tasks, context)
+
+# Automatic retry with backoff
+result = executor.execute_with_retry(task, context, max_retries=3, retry_delay=1.0)
+
+# Cancel a running task
+executor.cancel_task(task_id)
+```
+
+---
+
+### 7. Execution Monitoring
+
+Real-time observability into task execution with progress tracking and performance metrics.
+
+```python
+from laios.execution.monitor import get_execution_monitor, get_performance_monitor
+
+monitor = get_execution_monitor()
+perf = get_performance_monitor()
+
+# Track task progress
+monitor.update_task_progress(task_id, percent=50, message="Halfway done")
+
+# Get execution statistics
+stats = monitor.get_execution_stats(tasks)
+# -> ExecutionStats(total, completed, failed, cancelled, running, avg_time, success_rate)
+
+# Record custom metrics
+perf.record_metric(task_id, "response_time", 1.23, "seconds")
+summary = perf.get_metric_summary(task_id, "response_time")
+# -> {min, max, avg, count}
+
+# Listen for progress events
+monitor.add_progress_listener(lambda event, data: print(f"{event}: {data}"))
+```
+
+Use the CLI to view live status:
+
+```sh
+laios status --watch --interval 2
+```
+
+---
+
+### 8. Memory System (3 Tiers)
+
+LAIOS provides three types of memory, stored at `~/.laios/memory/`.
+
+#### Short-Term Memory
+In-memory conversation buffer (max 50 messages by default). Auto-evicts oldest entries.
+
+```python
+memory = agent.get_memory()
+memory.add("User asked about Python", memory_type=MemoryType.SHORT_TERM)
+recent = memory.get_recent(n=10, memory_type=MemoryType.SHORT_TERM)
+```
+
+#### Long-Term Memory
+Persistent keyword-searchable storage in `~/.laios/memory/long_term.json`.
+
+```python
+memory.store_long_term("Python best practices: use type hints", metadata={"topic": "python"})
+results = memory.search("type hints", limit=5)
+```
+
+#### Episodic Memory
+Records of completed goal executions in `~/.laios/memory/episodes/`.
+
+```python
+from laios.core.types import Episode
+memory.store_episode(episode)
+episodes = memory.get_episodes(session_id="s1", limit=10)
+```
+
+#### Memory CLI
+
+```sh
+# Search across all memories
+laios memory search "python best practices" --limit 5
+
+# List recent memories by type
+laios memory list --type short_term --limit 20
+laios memory list --type long_term
+laios memory list --type episodic
+```
+
+---
+
+### 9. Reflection and Self-Correction
+
+The agent evaluates its own performance, detects failure patterns, and learns from experience.
+
+#### Task Evaluation
+After each task, the reflector assesses success, confidence, issues, and suggestions:
+
+```python
+reflector = agent.get_reflector()
+evaluation = reflector.evaluate_task(task, result, context)
+# -> Evaluation(success=True, confidence=0.9, issues=[], suggestions=[], should_replan=False)
+```
+
+#### Plan Evaluation
+After a full plan executes, the reflector checks completion rates and detects failure patterns:
+
+```python
+plan_eval = reflector.evaluate_plan(plan, results, context)
+# Detects: low success rate, repeated error types, inefficient sequential chains
+```
+
+#### Learning from Episodes
+Generates insights from completed executions:
+
+```python
+insights = reflector.learn_from_episode(episode, context)
+# -> [Insight(type="tool_effectiveness", ...), Insight(type="performance", ...)]
+```
+
+**Error categorization**: `timeout`, `permission`, `not_found`, `network`, `validation`, `resource`, `execution` - each with tailored fix suggestions.
+
+**Configuration**:
+
+```yaml
+agent:
+  enable_reflection: true
+  max_replanning_attempts: 2
+```
+
+---
+
+### 10. Session Management
+
+Sessions persist conversations, context, and state across restarts.
+
+**Storage**: `~/.laios/sessions/<session_id>/` with `context.json` and `metadata.json`.
+
+```sh
+# List all saved sessions
+laios sessions list
+
+# Resume a session (prefix match supported)
+laios sessions resume abc123
+
+# Delete a session
+laios sessions delete abc123
+```
+
+Programmatic usage:
+
+```python
+from laios.core.session import SessionManager
+
+mgr = SessionManager()
+mgr.save(session_id)
+context = mgr.load(session_id)
+sessions = mgr.list_sessions()  # [(id, metadata), ...]
+mgr.delete(session_id)
+```
+
+---
+
+### 11. REST API Server
+
+A full FastAPI-based REST API for integrating LAIOS into other applications.
+
+```sh
+# Start the server
+laios serve --host 0.0.0.0 --port 8000
+
+# With auto-reload for development
+laios serve --reload
+
+# Swagger docs available at: http://localhost:8000/docs
+```
+
+Requires: `pip install 'laios[api]'`
+
+#### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/health` | Health check (version, LLM status, tool/plugin counts) |
+| `POST` | `/api/sessions` | Create a new session |
+| `GET` | `/api/sessions/{id}` | Get session state |
+| `DELETE` | `/api/sessions/{id}` | Delete a session |
+| `POST` | `/api/sessions/{id}/chat` | Send a chat message |
+| `POST` | `/api/sessions/{id}/goals` | Execute a goal |
+| `GET` | `/api/tools` | List all tools |
+| `GET` | `/api/tools/{name}` | Get tool schema |
+| `POST` | `/api/tools/{name}/execute` | Execute a tool |
+
+**Example**:
+
+```sh
+# Create session
+curl -X POST http://localhost:8000/api/sessions \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": "alice"}'
+
+# Send chat message
+curl -X POST http://localhost:8000/api/sessions/{session_id}/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello!"}'
+```
+
+---
+
+### 12. WebSocket Real-Time Channel
+
+Real-time bidirectional communication for building interactive UIs.
+
+**Endpoint**: `ws://host:port/ws/{session_id}` (auto-available when running `laios serve`)
+
+```js
+// Client example
+const ws = new WebSocket("ws://localhost:8000/ws/session-123");
+
+// Send a message
+ws.send(JSON.stringify({ type: "chat", data: { message: "Hello!" } }));
+
+// Send keepalive
+ws.send(JSON.stringify({ type: "ping", data: {} }));
+
+// Receive responses
+ws.onmessage = (event) => {
+  const msg = JSON.parse(event.data);
+  // msg.type: "response" | "status" | "pong" | "error"
+  console.log(msg.data.content);
+};
+```
+
+---
+
+### 13. Plugin System
+
+Extend LAIOS with custom tools and behaviors without modifying core code.
+
+#### Creating a Plugin
+
+1. Create a directory: `~/.laios/plugins/my_plugin/`
+2. Add `plugin.py`:
+
+```python
+from laios.plugins.base import PluginBase, PluginContext
+
+class MyPlugin(PluginBase):
+    name = "my_plugin"
+    version = "1.0.0"
+    description = "Adds custom tools"
+
+    def on_load(self, context: PluginContext) -> None:
+        # Access tool_registry, config, etc. via context
+        context.tool_registry.register_tool(MyCustomTool)
+
+    def on_unload(self) -> None:
+        pass  # Cleanup resources
+```
+
+#### Plugin Discovery
+
+Plugins are auto-discovered from configured directories on agent initialization:
+
+```yaml
+plugins:
+  enabled: true
+  directories:
+    - "~/.laios/plugins"
+    - "./plugins"
+  auto_load: false
+```
+
+#### Plugin Management
+
+```python
+registry = agent.get_plugin_registry()
+plugins = registry.list_plugins()
+plugin = registry.get_plugin("my_plugin")
+registry.unregister("my_plugin")
+```
+
+---
+
+### 14. Configuration System
+
+All settings are controlled via `config/default.yaml`. Key sections:
+
+#### LLM Configuration
+
+```yaml
+llm:
+  provider: "ollama"         # ollama | openai | anthropic
+  model: "gemma3:4b"
+  temperature: 0.5
+  max_tokens: 2048
+  timeout: 120
+```
+
+#### Trust Levels
+
+```yaml
+agent:
+  trust_level: "balanced"    # paranoid | balanced | autonomous
+```
+
+| Level | Behavior |
+|-------|----------|
+| `paranoid` | Shows plan without executing; requires manual approval |
+| `balanced` | Confirms risky operations before executing (default) |
+| `autonomous` | Auto-executes everything without confirmation |
+
+#### Tool Permissions
+
+```yaml
+tools:
+  enabled: [filesystem, shell, web, code]
+  permissions:
+    filesystem:
+      allowed_paths: ["~/", "/tmp"]
+      denied_paths: ["/etc", "/sys", "~/.ssh"]
+      max_file_size_mb: 100
+    shell:
+      allowed_commands: ["ls", "cat", "grep", "find"]
+      deny_sudo: true
+      timeout: 30
+    web:
+      allowed_domains: []          # empty = all allowed
+      denied_domains: ["localhost", "127.0.0.1"]
+```
+
+#### Execution Settings
+
+```yaml
+execution:
+  mode: "sync"                     # sync | async
+  max_parallel_tasks: 5
+  task_timeout: 25
+```
+
+#### Logging
+
+```yaml
+logging:
+  level: "INFO"                    # DEBUG | INFO | WARNING | ERROR
+  format: "structured"
+  file_path: "~/.laios/logs/laios.log"
+```
+
+---
+
+### 15. Programmatic API
+
+Use LAIOS as a Python library in your own applications:
+
+```python
+from laios.core.agent import AgentController
+from laios.core.config import Config
+from laios.core.types import Goal
+
+# Initialize
+config = Config.from_yaml("config/default.yaml")
+agent = AgentController(config)
+
+# Create session
+session = agent.create_session(user_id="alice")
+
+# Chat
+response = agent.process_message(session.id, "Hello! What can you do?")
+
+# Streaming chat
+for chunk in agent.process_message_stream(session.id, "Tell me a story"):
+    print(chunk, end="", flush=True)
+
+# Execute a structured goal
+result = agent.execute_goal(session.id, Goal(description="List all Python files"))
+# result = {"goal": ..., "plan": ..., "results": [...], "success": bool, "episode_id": ...}
+
+# Access subsystems
+registry = agent.get_tool_registry()
+memory = agent.get_memory()
+reflector = agent.get_reflector()
+plugins = agent.get_plugin_registry()
+
+# Get session state
+state = agent.get_session_state(session.id)
+
+# Cleanup
+agent.shutdown_session(session.id)
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────┐
+│         Agent Controller                │
+│  (Orchestration & Session Management)   │
+└─────────────┬───────────────────────────┘
+              │
+    ┌─────────┼─────────┐
+    │         │         │
+┌───▼───┐ ┌──▼──┐ ┌────▼────┐
+│Reason │ │Plan │ │ Execute │
+└───┬───┘ └──┬──┘ └────┬────┘
+    │        │         │
+    └────────┼─────────┘
+             │
+    ┌────────┼────────┐
+    │        │        │
+┌───▼──┐ ┌──▼──┐ ┌──▼───────┐
+│Memory│ │Tools│ │Reflection│
+└──────┘ └─────┘ └──────────┘
+```
+
+See [docs/architecture.md](docs/architecture.md) for detailed design documentation.
+
+## Project Structure
+
+```
+LAIOS/
+├── laios/                  # Main package
+│   ├── core/              # Agent controller, session, config, types
+│   ├── reasoning/         # Intent parsing and goal formulation
+│   ├── planning/          # Task decomposition and DAG generation
+│   ├── execution/         # Tool invocation, retry, monitoring
+│   ├── tools/             # Tool registry and 15 built-in tools
+│   │   └── builtin/      # filesystem, shell, web, git, python, data
+│   ├── memory/            # Short-term, long-term, episodic memory
+│   ├── reflection/        # Self-evaluation, learning, failure patterns
+│   ├── llm/               # LLM client abstraction + 3 providers
+│   │   └── providers/     # ollama, openai, anthropic
+│   ├── plugins/           # Plugin base, loader, registry
+│   └── ui/                # CLI (Typer), REST API (FastAPI), WebSocket
+├── tests/                 # Unit and integration tests
+├── docs/                  # Documentation
+└── config/                # Configuration files (default.yaml)
+```
+
+## Development
+
+### Setup Development Environment
+
+```sh
+# Install with all dependencies
+pip install -e ".[dev,api,llm]"
+
+# Run tests
+pytest
+
+# Run tests with coverage
+pytest --cov=laios --cov-report=html
+
+# Format code
+black laios tests
+
+# Lint
+ruff laios tests
+
+# Type checking
+mypy laios
+```
+
+### Contributing
+
+We follow a strict development methodology:
+
+1. **Architecture First** - Design before implementation
+2. **Interface Stability** - APIs are contracts
+3. **Test Coverage** - Every feature has tests
+4. **Documentation** - Code is not done until documented
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## Philosophy
+
+### Why Local-First?
+
+- **Privacy**: Your conversations and data stay on your hardware
+- **Cost**: No API fees, no usage limits
+- **Reliability**: Works offline, no service dependencies
+- **Control**: You own the entire stack
+
+### Why Modular?
+
+- **Extensibility**: Add features without core modifications
+- **Testability**: Components can be tested in isolation
+- **Flexibility**: Swap implementations (e.g., different LLMs)
+- **Clarity**: Each subsystem has a clear responsibility
+
+### Why Production-Ready?
+
+Most agent frameworks are demos. LAIOS is designed for:
+
+- Long-running processes
+- Error recovery and retry logic
+- Observable execution
+- Resource management
+- Security and sandboxing
+
+## Use Cases
+
+- **Personal AI Assistant** - Schedule management, email drafting, research
+- **Code Review Agent** - Automated PR analysis and suggestions
+- **Research Assistant** - Literature review, data analysis, report generation
+- **DevOps Automation** - Infrastructure monitoring, incident response
+- **Data Pipeline Orchestration** - ETL with intelligent error handling
+
+## Comparison to Other Frameworks
+
+| Feature | LAIOS | LangChain | AutoGPT | Agents |
+|---------|-------|-----------|---------|--------|
+| Local-first          | Yes | No  | No  | No  |
+| Explicit plans       | Yes | No  | Partial | Partial |
+| Modular architecture | Yes | Partial | No  | Partial |
+| Production-ready     | Yes | Yes | No  | Partial |
+| Memory systems       | Yes | Yes | Partial | Yes |
+| Self-correction      | Yes | No  | Partial | No  |
+| Plugin system        | Yes | Yes | Partial | Partial |
+| REST API + WebSocket | Yes | No  | No  | Partial |
+| Multi-provider LLM   | Yes | Yes | Partial | Partial |
+
+## Documentation
+
+Full documentation is available in the `docs/` directory:
+
+- **[Quick Start](docs/quickstart.md)** — installation and first steps
+- **[Tutorials](docs/tutorials/01-first-agent.md)** — step-by-step guides (01–04)
+- **[Developer Guides](docs/guides/creating-tools.md)** — creating tools, plugins, custom LLM providers
+- **[API Reference](docs/api/index.md)** — complete class and method reference
+- **[Architecture](docs/architecture.md)** — system design documentation
+- **[FAQ](docs/faq.md)** — common questions and answers
+
+To build and serve the documentation site locally:
+
+```sh
+pip install -e ".[docs]"
+mkdocs serve
+# Open http://localhost:8000
+```
+
+---
+
+## Examples
+
+Runnable example scripts are in the `examples/` directory:
+
+| Script | What it demonstrates | LLM? |
+|--------|---------------------|------|
+| `01_personal_assistant.py` | Multi-turn chat + long-term memory | Yes |
+| `02_code_reviewer.py` | `execute_goal()` + AUTONOMOUS trust + episode retrieval | Yes |
+| `03_custom_tool.py` | Class-based `BaseTool`, `create_simple_tool()`, error paths | No |
+| `04_streaming.py` | `process_message_stream()` with timing comparison | Yes |
+| `05_multi_provider_routing.py` | `LLMRouter` fallback & round-robin, usage stats | Yes |
+| `06_plugin_creation.py` | Programmatic plugin, `EventBus`, `PluginRegistry` | No |
+
+```sh
+python examples/03_custom_tool.py        # no LLM needed
+python examples/01_personal_assistant.py # requires ollama serve
+```
+
+---
+
+## Roadmap to v1.0
+
+- [x] Phase 0: Foundation
+- [x] Phase 1: Tool System
+- [x] Phase 2: Planning Engine
+- [x] Phase 3: LLM Integration
+- [x] Phase 4: Memory System
+- [x] Phase 5: Execution & Monitoring
+- [x] Phase 6: Reflection & Self-Correction
+- [x] Phase 7: Plugin Architecture
+- [x] Phase 8: Production Hardening
+- [x] Phase 9: Web UI & API
+- [x] Phase 10: Documentation & Examples
+
+**v1.0.0 is complete.**
+
+---
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Citation
+
+If you use LAIOS in your research, please cite:
+
+```bibtex
+@software{laios2024,
+  title = {LAIOS: Local AI Operating System},
+  author = {AI-Alon},
+  year = {2026},
+  url = {https://github.com/AI-Alon/laios}
+}
+```
+
+## Acknowledgments
+
+Built with inspiration from:
+- ReAct (Reasoning + Acting)
+- AutoGPT (autonomous agent paradigm)
+- LangChain (tool abstraction)
+- Research in autonomous agents and LLM planning
+
+---
+
+**Status**: v1.0.0 — Stable release
+
+**Maintainers**: Looking for contributors! See [CONTRIBUTING.md](CONTRIBUTING.md)

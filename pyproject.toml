@@ -1,0 +1,97 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laios"
+version = "1.0.0"
+description = "Local AI Operating System - A modular autonomous agent framework"
+authors = [
+    {name = "LAIOS Team"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["ai", "agent", "autonomous", "local", "llm"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "pydantic>=2.0.0",
+    "typer>=0.9.0",
+    "networkx>=3.0",
+    "structlog>=23.0.0",
+    "pyyaml>=6.0",
+    "httpx>=0.25.0",
+    "rich>=13.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+]
+
+api = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "aiofiles>=23.0.0",
+]
+
+llm = [
+    "ollama>=0.1.0",
+    "openai>=1.0.0",  # Optional
+    "anthropic>=0.7.0",  # Optional
+]
+
+# Memory system dependencies (Phase 4+)
+memory = [
+    "chromadb>=0.4.0",
+]
+
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
+    "mkdocs-minify-plugin>=0.7",
+]
+
+[project.scripts]
+laios = "laios.ui.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["laios*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=laios --cov-report=term-missing --cov-report=html"

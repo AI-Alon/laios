@@ -1,0 +1,2 @@
+[console_scripts]
+laios = laios.ui.cli:app
