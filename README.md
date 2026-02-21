@@ -873,27 +873,6 @@ agent.shutdown_session(session.id)
 
 See [docs/architecture.md](docs/architecture.md) for detailed design documentation.
 
-## Project Structure
-
-```
-LAIOS/
-├── laios/                  # Main package
-│   ├── core/              # Agent controller, session, config, types
-│   ├── reasoning/         # Intent parsing and goal formulation
-│   ├── planning/          # Task decomposition and DAG generation
-│   ├── execution/         # Tool invocation, retry, monitoring
-│   ├── tools/             # Tool registry and 15 built-in tools
-│   │   └── builtin/      # filesystem, shell, web, git, python, data
-│   ├── memory/            # Short-term, long-term, episodic memory
-│   ├── reflection/        # Self-evaluation, learning, failure patterns
-│   ├── llm/               # LLM client abstraction + 3 providers
-│   │   └── providers/     # ollama, openai, anthropic
-│   ├── plugins/           # Plugin base, loader, registry
-│   └── ui/                # CLI (Typer), REST API (FastAPI), WebSocket
-├── tests/                 # Unit and integration tests
-├── docs/                  # Documentation
-└── config/                # Configuration files (default.yaml)
-```
 
 ## Development
 
