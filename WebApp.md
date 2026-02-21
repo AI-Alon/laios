@@ -22,7 +22,6 @@ python -m laios.ui.cli serve --port 8000
 
 
 Then open **http://localhost:8000** in your browser.
-**pro-tip: if there is a problem with --prot 8000 try using a diffrent one.**
 The server hosts both the API and the web UI on the same port.
 
 ## Pages
